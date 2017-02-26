@@ -10,21 +10,37 @@ library(shiny)
 shinyUI(fluidPage(
 
   # Application title
-  titlePanel("Old Faithful Geyser Data"),
+  titlePanel("CRO Exchange"),
 
   # Sidebar with a slider input for number of bins
   sidebarLayout(
     sidebarPanel(
-      sliderInput("bins",
-                  "Number of bins:",
-                  min = 1,
-                  max = 50,
-                  value = 30)
+      selectInput("valuta", label = "Valuta:",
+                  choices = list("EUR" = "EUR",
+                                 "HRK" = "HRK",
+                                 "AUD" = "AUD", 
+                                 "CAD" = "CAD", 
+                                 "CZK" = "CZK", 
+                                 "DKK" = "DKK", 
+                                 "HUF" = "HUF", 
+                                 "JPY" = "JPY", 
+                                 "NOK" = "NOK", 
+                                 "SEK" = "SEK", 
+                                 "CHG" = "CHG", 
+                                 "GBP" = "GBP", 
+                                 "USD" = "USD", 
+                                 "PLN" = "PLN")),
+      selectInput("tip", label = "Tip tecaja",
+                  choices = list("srednji" = "srednji", 
+                                 "kupovni" = "kupovni", 
+                                 "prodajni" = "prodajni")),
+      numericInput("iznos", label = "Iznos", value = 1.00, min = 0, step = .01)
     ),
 
     # Show a plot of the generated distribution
     mainPanel(
-      plotOutput("distPlot")
+      h3(textOutput("text1")),
+      dataTableOutput(outputId = "tecajTable")
     )
   )
 ))
