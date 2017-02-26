@@ -19,18 +19,18 @@ read_tecaj_hnb <- function(hnb_url = "http://www.hnb.hr/hnb-tecajna-lista-portle
   return(tecaj_lst)
 }
 
-hrk_2_valuta <- function(iznos, oznaka = "EUR", tip = "srednji", tecaj = read_tecaj_hnb()){
+hrk_2_valuta <- function(iznos, valuta = "EUR", tip = "srednji", tecaj = read_tecaj_hnb()){
   redak <- subset(tecaj$tecaj, oznaka == valuta)
-  faktor <- as.numeric(redak[tip])
-  jedinica <- as.numeric(redak["jedinica"])
+  faktor <- as.numeric(redak[ , tip])
+  jedinica <- as.numeric(redak[ , "jedinica"])
   iznos2 <- iznos / faktor * jedinica
   return(iznos2)
 }
 
-valuta_2_hrk <- function(iznos, oznaka = "EUR", tip = "srednji", tecaj = read_tecaj_hnb()){
+valuta_2_hrk <- function(iznos, valuta = "EUR", tip = "srednji", tecaj = read_tecaj_hnb()){
   redak <- subset(tecaj$tecaj, oznaka == valuta)
-  faktor <- as.numeric(redak[tip])
-  jedinica <- as.numeric(redak["jedinica"])
+  faktor <- as.numeric(redak[,tip])
+  jedinica <- as.numeric(redak[,"jedinica"])
   iznos2 <- iznos * faktor / jedinica
   return(iznos2)
 }
@@ -40,16 +40,16 @@ valuta_2_hrk <- function(iznos, oznaka = "EUR", tip = "srednji", tecaj = read_te
 valuta_2_other <- function(iznos = 1, valuta = "EUR", tip = "srednji", tecaj = read_tecaj_hnb()){
   if (valuta == "HRK") {
     df <- data.frame(valuta = tecaj$tecaj$oznaka)
-    faktor <- tecaj$tecaj[tip]
-    jedinica <- tecaj$tecaj["jedinica"]
+    faktor <- tecaj$tecaj[ , tip]
+    jedinica <- tecaj$tecaj[, "jedinica"]
     df$iznos <- iznos / faktor * jedinica
   } else {
     df <- data.frame(valuta = c("HRK",as.character(tecaj$tecaj$oznaka)))
-    iznos_hrk <- valuta_2_hrk(iznos = iznos, oznaka = valuta, tip = tip, tecaj = tecaj)
-    iznos <- valuta_2_hrk(iznos = iznos, oznaka = valuta, tip = "prodajni", tecaj = tecaj)
-    faktor <- tecaj$tecaj["kupovni"]
-    jedinica <- tecaj$tecaj["jedinica"]
-    df$iznos <- c(iznos_hrk, iznos / faktor[[1]] * jedinica[[1]])
+    iznos_hrk <- valuta_2_hrk(iznos = iznos, valuta = valuta, tip = tip, tecaj = tecaj)
+    iznos <- valuta_2_hrk(iznos = iznos, valuta = valuta, tip = "prodajni", tecaj = tecaj)
+    faktor <- tecaj$tecaj[ , "kupovni"]
+    jedinica <- tecaj$tecaj[ , "jedinica"]
+    df$iznos <- c(iznos_hrk, iznos / faktor * jedinica)
   }
   return(df) 
 }
